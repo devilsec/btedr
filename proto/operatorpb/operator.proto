@@ -1,0 +1,26 @@
+// Communication between operator/console to the server
+// protoc --go_out=. --go_opt=paths=source_relative --go-grpc_out=. --go-grpc_opt=paths=source_relative implant.proto
+syntax = "proto3";
+package operatorpb;
+option go_package = "github.com/devilsec/btedr/proto/operatorpb";
+
+import "taskpb/task.proto";
+
+service OperatorRPC {
+  rpc Ping (taskpb.PingReq) returns (PingResp);
+  rpc Start (StartReq) returns (StartResp);
+}
+
+message PingResp {
+  uint32 roundtrip = 1;
+  string error = 2;
+}
+
+message StartReq {
+  uint32 port = 1;
+}
+
+message StartResp {
+  string status = 1;
+  string error = 2;
+}

@@ -1,0 +1,21 @@
+// Protobuf defining tasks for implants
+// protoc --go_out=. --go_opt=paths=source_relative --go-grpc_out=. --go-grpc_opt=paths=source_relative task.proto
+syntax = "proto3";
+package taskpb;
+option go_package = "github.com/devilsec/btedr/proto/taskpb";
+
+// Type of task
+enum Type {
+  Ping = 0;
+  Ls = 1;
+  Exec = 2;
+}
+
+message Task {
+  string id = 1;
+  Type type = 2;
+}
+
+message PingReq {
+  uint32 duration = 1;
+}
