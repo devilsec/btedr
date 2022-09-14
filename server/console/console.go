@@ -17,51 +17,50 @@ import (
 )
 
 type Console struct {
-  App *grumble.App
-  Rpc operatorpb.OperatorRPCClient
+	App *grumble.App
+	Rpc operatorpb.OperatorRPCClient
 }
 
 // Create a new console and connect to an in-memory gRPC server
 func New(root string, listener *bufconn.Listener) Console {
 	app := grumble.New(&grumble.Config{
-	  Name: "BTEDR",
-	  Description: "A visibility tool for rapid, panicky, and last minute incident response.",
-	  HistoryFile: filepath.Join(root, ".btedr_history"),
-    Prompt: "❯ ",
-    PromptColor: color.New(),
-    HelpHeadlineColor: color.New(),
-    HelpHeadlineUnderline: true,
-    HelpSubCommands: true,
+		Name:                  "BTEDR",
+		Description:           "A visibility tool for rapid, panicky, and last minute incident response.",
+		HistoryFile:           filepath.Join(root, ".btedr_history"),
+		Prompt:                "❯ ",
+		PromptColor:           color.New(),
+		HelpHeadlineColor:     color.New(),
+		HelpHeadlineUnderline: true,
+		HelpSubCommands:       true,
 	})
 
+	console := Console{
+		App: app,
+		Rpc: rpcClient(listener),
+	}
 
-  console := Console{
-    App: app,
-    Rpc: rpcClient(listener),
-  }
+	addCommands(console)
 
-  addCommands(console)
-
-  return console
+	return console
 }
 
 func rpcClient(listener *bufconn.Listener) operatorpb.OperatorRPCClient {
-  ctxDialer := grpc.WithContextDialer(func(ctx context.Context, s string) (net.Conn, error) {
-    return listener.Dial()
-  })
+	ctxDialer := grpc.WithContextDialer(func(ctx context.Context, s string) (net.Conn, error) {
+		return listener.Dial()
+	})
 
-  // Dial in to the in-memory grpc server
-  options := []grpc.DialOption{
-    ctxDialer,
-    grpc.WithTransportCredentials(insecure.NewCredentials()),
-    // TODO: Set the maximum size of an in-memory message
-    grpc.WithBlock(),
-  }
-  conn, err := grpc.DialContext(context.Background(), "", options...)
-  if err != nil {
-    util.Log.Fatal(err)
-  }
-  return operatorpb.NewOperatorRPCClient(conn)
+	// Dial in to the in-memory grpc server
+	options := []grpc.DialOption{
+		ctxDialer,
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+		// TODO: Set the maximum size of an in-memory message
+		grpc.WithBlock(),
+	}
+	conn, err := grpc.DialContext(context.Background(), "", options...)
+	if err != nil {
+		util.Log.Fatal(err)
+	}
+	return operatorpb.NewOperatorRPCClient(conn)
 }
 
 // TODO: Make the prompt more fancy, to reflect the state of the program

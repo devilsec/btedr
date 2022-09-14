@@ -7,11 +7,11 @@ import (
 )
 
 func main() {
-  srv, listener := operatorrpc.Start()
-  defer srv.GracefulStop()
-  c := console.New(util.Root, listener)
+	srv, listener := operatorrpc.Start()
+	defer srv.GracefulStop()
+	c := console.New(util.Root, listener)
 
-  if err := c.App.Run(); err != nil {
-    util.Log.Fatal(err)
-  }
+	if err := c.App.Run(); err != nil {
+		util.Log.Fatal(err)
+	}
 }
