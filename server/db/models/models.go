@@ -1,7 +1,7 @@
 package models
 
-// A single implant
-type Implant struct {
+// A single agent
+type Agent struct {
 	ID       string `gorm:"primaryKey"`
   Os       string
 	Ip       string

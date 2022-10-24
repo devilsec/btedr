@@ -1,13 +1,13 @@
-// Protobuf service communicating with implants
-// protoc --go_out=. --go_opt=paths=source_relative --go-grpc_out=. --go-grpc_opt=paths=source_relative implant.proto
+// Protobuf service communicating with agents
+// protoc --go_out=. --go_opt=paths=source_relative --go-grpc_out=. --go-grpc_opt=paths=source_relative */*.proto
 syntax = "proto3";
 package btedrpb;
-option go_package = "github.com/devilsec/btedr/proto/implantpb";
+option go_package = "github.com/devilsec/btedr/proto/agentpb";
 
 import "taskpb/task.proto";
 
-// The service to interact with implants
-service ImplantRPC {
+// The service to interact with agents
+service AgentRPC {
   rpc Register (Registration) returns (Empty);
   // Retrieve a task from the server (beacon mode)
   rpc GetTask (Request) returns (taskpb.Task);
@@ -28,11 +28,11 @@ message Registration {
 
 // A task request
 message Request {
-  string implantid = 1;
+  string agentid = 1;
 }
 
 message Result {
   string taskid = 1;
-  string implantid = 2;
+  string agentid = 2;
   taskpb.Type type = 3;
 }

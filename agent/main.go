@@ -1,11 +1,11 @@
 package main
 
-// go build -o btedr-implant -ldflags "-X \"main.ServerIP=$SERVERIP\" -X main.ServerPort=$SERVERPORT" ./implant
+// go build -o btedr-agent -ldflags "-X \"main.ServerIP=$SERVERIP\" -X main.ServerPort=$SERVERPORT" ./agent
 
 import (
 	"strconv"
 
-	"github.com/devilsec/btedr/implant/client"
+	"github.com/devilsec/btedr/agent/client"
 )
 
 // Strings embedded at compile time

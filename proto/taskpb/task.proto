@@ -1,5 +1,5 @@
-// Protobuf defining tasks for implants
-// protoc --go_out=. --go_opt=paths=source_relative --go-grpc_out=. --go-grpc_opt=paths=source_relative task.proto
+// Protobuf defining tasks for agents
+// protoc --go_out=. --go_opt=paths=source_relative --go-grpc_out=. --go-grpc_opt=paths=source_relative */*.proto
 syntax = "proto3";
 package taskpb;
 option go_package = "github.com/devilsec/btedr/proto/taskpb";

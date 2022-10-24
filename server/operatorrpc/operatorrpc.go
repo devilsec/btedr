@@ -8,10 +8,10 @@ import (
 	"fmt"
 	"net"
 
-	"github.com/devilsec/btedr/proto/implantpb"
+	"github.com/devilsec/btedr/proto/agentpb"
 	"github.com/devilsec/btedr/proto/operatorpb"
 	"github.com/devilsec/btedr/proto/taskpb"
-	"github.com/devilsec/btedr/server/implantrpc"
+	"github.com/devilsec/btedr/server/agentrpc"
 	"github.com/devilsec/btedr/server/util"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/test/bufconn"
@@ -42,7 +42,7 @@ func Start() (*grpc.Server, *bufconn.Listener) {
 	return srv, listener
 }
 
-// RPC Service for starting a listener for implants on a specified port
+// RPC Service for starting a listener for agents on a specified port
 func (server *OperatorServer) Start(ctx context.Context, req *operatorpb.StartReq) (*operatorpb.StartResp, error) {
 	listener, err := net.Listen("tcp", fmt.Sprintf(":%d", req.GetPort()))
 	if err != nil {
@@ -50,9 +50,9 @@ func (server *OperatorServer) Start(ctx context.Context, req *operatorpb.StartRe
 	}
 
 	s := grpc.NewServer()
-	implantpb.RegisterImplantRPCServer(s, &implantrpc.ImplantServer{})
+	agentpb.RegisterAgentRPCServer(s, &agentrpc.AgentServer{})
 
-	// Start listening for implants
+	// Start listening for agents
 	// TODO: Create a `Job` struct, to notify when this job has ended
 	go func() {
 		if err := s.Serve(listener); err != nil {
@@ -68,8 +68,8 @@ func (server *OperatorServer) Start(ctx context.Context, req *operatorpb.StartRe
 	return resp, nil
 }
 
-// RPC Service for pinging an implant
-// TODO: Communicate with an implant
+// RPC Service for pinging an agent
+// TODO: Communicate with an agent
 func (server *OperatorServer) Ping(ctx context.Context, req *taskpb.PingReq) (*operatorpb.PingResp, error) {
 	resp := &operatorpb.PingResp{
 		Roundtrip: 1337,

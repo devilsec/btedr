@@ -1,15 +1,15 @@
-// Create a client to connect the implant to the server
+// Create a client to connect the agent to the server
 package client
 
 import (
-	"github.com/devilsec/btedr/proto/implantpb"
+	"github.com/devilsec/btedr/proto/agentpb"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
 
 // A Client connects to a gRPC server to retrive tasks
 type Client struct {
-	Rpc    implantpb.ImplantRPCClient
+	Rpc    agentpb.AgentRPCClient
 	Server Server
 	Dial   *grpc.ClientConn
 }
@@ -28,7 +28,7 @@ func New(serverIP string, serverPort int16) (Client, error) {
 		return Client{}, nil
 	}
 
-	rpc := implantpb.NewImplantRPCClient(dial)
+	rpc := agentpb.NewAgentRPCClient(dial)
 	client := Client{
 		Rpc:    rpc,
 		Server: server,
@@ -38,7 +38,7 @@ func New(serverIP string, serverPort int16) (Client, error) {
 	return client, nil
 }
 
-// TODO: Create a gRPC request to register the implant with the server
+// TODO: Create a gRPC request to register the agent with the server
 func (Client) Register() {
 
 }

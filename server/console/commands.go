@@ -15,7 +15,7 @@ func addCommands(console Console) {
 	ctx := context.Background()
 	console.App.AddCommand(&grumble.Command{
 		Name: "ping",
-		Help: "Check if an implant is alive.",
+		Help: "Check if an agent is alive.",
 		Flags: func(f *grumble.Flags) {
 			// TODO: Create constants.go for default timeout
 			f.Duration("t", "timeout", 5*time.Second, "ping timeout duration")
@@ -37,7 +37,7 @@ func addCommands(console Console) {
 
 	console.App.AddCommand(&grumble.Command{
 		Name: "start",
-		Help: "Start listening for implants",
+		Help: "Start listening for agents",
 		Flags: func(f *grumble.Flags) {
 			// TODO: Create constants.go for default port
 			f.Int("p", "port", 50051, "Specify listening port")

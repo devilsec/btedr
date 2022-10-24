@@ -14,7 +14,7 @@ import (
 type database struct {
   mu sync.Mutex
   orm *gorm.DB
-  // Key of implant_id and value of Task queue
+  // Key of agent_id and value of Task queue
   tasks map[string]([]*taskpb.Task)
 }
 
@@ -25,8 +25,8 @@ func New() (*database, error) {
     return nil, err
 	}
 
-	// Create tables for the Implants
-	if err = orm.AutoMigrate(&models.Implant{}); err != nil {
+	// Create tables for the Agents
+	if err = orm.AutoMigrate(&models.Agent{}); err != nil {
     return nil, err
 	}
 
