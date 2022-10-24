@@ -1,35 +1,46 @@
 package db
 
+import (
+	"errors"
+
+	"github.com/devilsec/btedr/proto/taskpb"
+)
+
 // Pop a task from an implant
-func PopTask() {
-	Mu.Lock()
-	defer Mu.Unlock()
-	// TODO: Query implant
-	// TODO: Get the task
-	// TODO: Remove the task from the implant
+func (db *database) PopTask(implant string) (*taskpb.Task, error) {
+	db.mu.Lock()
+	defer db.mu.Unlock()
+
+  // Get the queue. Return some error if the implant doesn't have a queue
+  queue, ok := db.tasks[implant]
+  if !ok {
+    return nil, errors.New("Implant not registered")
+  }
+
+  // Get the first task in the queue. Return some error if the queue is empty
+  if len(queue) > 0 {
+    task := queue[0]
+    db.tasks[implant] = db.tasks[implant][1:]
+    return task, nil
+  } else {
+    return nil, errors.New("Queue is empty")
+  }
 }
 
 // TODO: Get an Implant from Db
-func Implant() {
-	Mu.Lock()
-	defer Mu.Unlock()
+func (db *database) Implant() {
+	db.mu.Lock()
+	defer db.mu.Unlock()
 	// ...
 }
 
 // TODO: Add an Implant to the Db
-func AddImplant() {
-	Mu.Lock()
-	defer Mu.Unlock()
-}
-
-// TODO: Get a Task from Db
-func Task() {
-	Mu.Lock()
-	defer Mu.Unlock()
-	// ...
+func (db *database) AddImplant() {
+	db.mu.Lock()
+	defer db.mu.Unlock()
 }
 
 // TODO: Add a Task to the Db
-func AddTask() {
+func (db *database) AddTask() {
 
 }

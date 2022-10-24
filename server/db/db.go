@@ -1,29 +1,39 @@
 package db
 
 import (
+	"gorm.io/driver/sqlite"
+	"gorm.io/gorm"
 	"path/filepath"
 	"sync"
 
+  "github.com/devilsec/btedr/proto/taskpb"
 	"github.com/devilsec/btedr/server/db/models"
 	"github.com/devilsec/btedr/server/util"
-	"gorm.io/driver/sqlite"
-	"gorm.io/gorm"
 )
 
-// Gorm is thread-safe, but this mutex should be locked when making successive calls to the Db
-var Mu = &sync.Mutex{}
+type database struct {
+  mu sync.Mutex
+  orm *gorm.DB
+  // Key of implant_id and value of Task queue
+  tasks map[string]([]*taskpb.Task)
+}
 
-// Create a sqlite3 database
-var Db = func() *gorm.DB {
-	// Stored in $HOME/.btedr/btedr.db
-	db, err := gorm.Open(sqlite.Open(filepath.Join(util.Root, "btedr.db")), &gorm.Config{})
+func New() (*database, error) {
+  // Create a sqlite3 database stored in btedr.orm
+	orm, err := gorm.Open(sqlite.Open(filepath.Join(util.Root, "btedr.db")), &gorm.Config{})
 	if err != nil {
-		util.Log.Fatal(err)
+    return nil, err
 	}
 
-	// Create tables for the Tasks and Implants
-	if err = db.AutoMigrate(&models.Task{}, &models.Implant{}); err != nil {
-		util.Log.Fatal(err)
+	// Create tables for the Implants
+	if err = orm.AutoMigrate(&models.Implant{}); err != nil {
+    return nil, err
 	}
-	return db
-}()
+
+  db := &database{
+    orm: orm,
+    tasks: make(map[string]([]*taskpb.Task)),
+  }
+
+  return db, nil
+}

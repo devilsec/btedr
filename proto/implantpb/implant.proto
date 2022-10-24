@@ -8,12 +8,23 @@ import "taskpb/task.proto";
 
 // The service to interact with implants
 service ImplantRPC {
+  rpc Register (Registration) returns (Empty);
   // Retrieve a task from the server (beacon mode)
   rpc GetTask (Request) returns (taskpb.Task);
   rpc TaskResult (Result) returns (Empty);
 }
 
 message Empty {}
+
+message Registration {
+  string id = 1;
+  string os = 2;
+  string ip = 3;
+  string hostname = 4;
+  string uid = 5;
+  string guid = 6;
+  repeated string users = 7;
+}
 
 // A task request
 message Request {
