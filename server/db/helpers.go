@@ -7,7 +7,7 @@ import (
 )
 
 // Pop a task from an agent
-func (db *database) PopTask(agent string) (*taskpb.Task, error) {
+func (db *Database) PopTask(agent string) (*taskpb.Task, error) {
 	db.mu.Lock()
 	defer db.mu.Unlock()
 
@@ -28,19 +28,19 @@ func (db *database) PopTask(agent string) (*taskpb.Task, error) {
 }
 
 // TODO: Get an agent from Db
-func (db *database) Agent() {
+func (db *Database) Agent() {
 	db.mu.Lock()
 	defer db.mu.Unlock()
 	// ...
 }
 
 // TODO: Add an agent to the Db
-func (db *database) AddAgent() {
+func (db *Database) AddAgent() {
 	db.mu.Lock()
 	defer db.mu.Unlock()
 }
 
 // TODO: Add a Task to the Db
-func (db *database) AddTask() {
+func (db *Database) AddTask() {
 
 }

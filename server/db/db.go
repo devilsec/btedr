@@ -11,14 +11,14 @@ import (
 	"github.com/devilsec/btedr/server/util"
 )
 
-type database struct {
+type Database struct {
 	mu  sync.Mutex
 	orm *gorm.DB
 	// Key of agent_id and value of Task queue
 	tasks map[string]([]*taskpb.Task)
 }
 
-func New() (*database, error) {
+func New() (*Database, error) {
 	// Create a sqlite3 database stored in btedr.orm
 	orm, err := gorm.Open(sqlite.Open(filepath.Join(util.Root, "btedr.db")), &gorm.Config{})
 	if err != nil {
@@ -30,7 +30,7 @@ func New() (*database, error) {
 		return nil, err
 	}
 
-	db := &database{
+	db := &Database{
 		orm:   orm,
 		tasks: make(map[string]([]*taskpb.Task)),
 	}
