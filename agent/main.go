@@ -4,6 +4,7 @@ package main
 
 import (
 	"strconv"
+	"time"
 
 	"github.com/devilsec/btedr/agent/client"
 )
@@ -24,7 +25,11 @@ func main() {
 	}
 
 	defer client.Dial.Close()
-	client.Register()
+
+  // Keep trying to register if registration fails
+  for err := client.Register(); err != nil; err = client.Register() {
+    time.Sleep(5*time.Second)
+  }
 
 	// TODO:
 	// While not done...
@@ -33,7 +38,7 @@ func main() {
 
 // Convert string to int16
 func parsePort(port string) (int16, error) {
-	parse, err := strconv.ParseInt(ServerPort, 10, 16)
+	parse, err := strconv.ParseUint(ServerPort, 10, 16)
 	if err != nil {
 		return 0, err
 	}

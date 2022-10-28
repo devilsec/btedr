@@ -3,6 +3,18 @@ package tasks
 
 import "github.com/devilsec/btedr/proto/agentpb"
 
+func Info() *agentpb.Registration {
+  return &agentpb.Registration{
+      Id: "",
+      Os: os(),
+      Ip: ip(),
+      Hostname: hostname(),
+      User: user(),
+      Groups: groups(),
+      Users: users(),
+    }
+}
+
 // Get the distro name from /etc/os-release, ie "Ubuntu 22.04.1 LTS"
 func os() string {
 	return "TODO"

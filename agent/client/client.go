@@ -2,6 +2,9 @@
 package client
 
 import (
+	"context"
+
+	"github.com/devilsec/btedr/agent/tasks"
 	"github.com/devilsec/btedr/proto/agentpb"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -38,7 +41,9 @@ func New(serverIP string, serverPort int16) (Client, error) {
 	return client, nil
 }
 
-// TODO: Create a gRPC request to register the agent with the server
-func (Client) Register() {
-
+// Create a gRPC request to register the agent with the server
+func (client *Client) Register() error {
+  ctx := context.Background();
+  _, err := client.Rpc.Register(ctx, tasks.Info())
+  return err
 }
