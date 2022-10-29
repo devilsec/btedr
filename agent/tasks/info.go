@@ -4,15 +4,15 @@ package tasks
 import "github.com/devilsec/btedr/proto/agentpb"
 
 func Info() *agentpb.Registration {
-  return &agentpb.Registration{
-      Id: "",
-      Os: os(),
-      Ip: ip(),
-      Hostname: hostname(),
-      User: user(),
-      Groups: groups(),
-      Users: users(),
-    }
+	return &agentpb.Registration{
+		Id:       "",
+		Os:       os(),
+		Ip:       ip(),
+		Hostname: hostname(),
+		User:     user(),
+		Groups:   groups(),
+		Users:    users(),
+	}
 }
 
 // Get the distro name from /etc/os-release, ie "Ubuntu 22.04.1 LTS"
@@ -33,7 +33,7 @@ func hostname() string {
 // Get the name of the user running this agent
 func user() *agentpb.User {
 	u := &agentpb.User{
-		Id:   "TODO",
+		Id:   0,
 		Name: "TODO",
 	}
 	return u
@@ -43,7 +43,7 @@ func user() *agentpb.User {
 func groups() []*agentpb.User {
 	groups := []*agentpb.User{}
 	u := &agentpb.User{
-		Id:   "TODO",
+		Id:   0,
 		Name: "TODO",
 	}
 	groups = append(groups, u)
@@ -54,7 +54,7 @@ func groups() []*agentpb.User {
 func users() []*agentpb.User {
 	users := []*agentpb.User{}
 	u := &agentpb.User{
-		Id:   "TODO",
+		Id:   0,
 		Name: "TODO",
 	}
 	users = append(users, u)

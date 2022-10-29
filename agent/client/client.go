@@ -3,6 +3,7 @@ package client
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/devilsec/btedr/agent/tasks"
 	"github.com/devilsec/btedr/proto/agentpb"
@@ -18,7 +19,7 @@ type Client struct {
 }
 
 // Create a client and connect to the server
-func New(serverIP string, serverPort int16) (Client, error) {
+func New(serverIP string, serverPort uint16) (Client, error) {
 	server := Server{
 		ip:   serverIP,
 		port: serverPort,
@@ -26,7 +27,7 @@ func New(serverIP string, serverPort int16) (Client, error) {
 
 	// Connect to the server
 	// TODO: Connect via HTTPS (mutual TLS?)
-	dial, err := grpc.Dial(server.ip, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	dial, err := grpc.Dial(fmt.Sprintf("%s:%d", server.ip, server.port), grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		return Client{}, nil
 	}
@@ -43,7 +44,7 @@ func New(serverIP string, serverPort int16) (Client, error) {
 
 // Create a gRPC request to register the agent with the server
 func (client *Client) Register() error {
-  ctx := context.Background();
-  _, err := client.Rpc.Register(ctx, tasks.Info())
-  return err
+	ctx := context.Background()
+	_, err := client.Rpc.Register(ctx, tasks.Info())
+	return err
 }

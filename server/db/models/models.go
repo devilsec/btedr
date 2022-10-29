@@ -6,6 +6,7 @@ type Agent struct {
 	Os       string
 	Ip       string
 	Hostname string
-	Uid      string
-	Gid      string
+	User     string
+	Groups   string
+	OsUsers  string
 }

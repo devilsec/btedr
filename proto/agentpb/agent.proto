@@ -17,7 +17,7 @@ service AgentRPC {
 message Empty {}
 
 message User {
-  string id = 1;
+  uint32 id = 1;
   string name = 2;
 }
 
