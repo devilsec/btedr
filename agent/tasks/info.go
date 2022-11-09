@@ -11,8 +11,6 @@ import (
 	"strconv"
 	"strings"
 
-	"os/exec"
-
 	"github.com/devilsec/btedr/proto/agentpb"
 )
 
@@ -42,6 +40,10 @@ func osType() string {
 
 			line := scanner.Text()
 			vals := strings.Split(line, "=")
+			if len(vals) < 2 {
+				continue
+			}
+
 			if vals[0] == "NAME" {
 				Name = vals[1]
 			} else if vals[0] == "VERSION" {
@@ -132,14 +134,50 @@ func groups() []*agentpb.User {
 	return groups
 }
 
+func UsersInpasswd() []string {
+	readpwdFile, err := os.Open("/etc/passwd")
+	var usersList []string
+	if err == nil {
+		scanner := bufio.NewScanner(readpwdFile)
+		scanner.Split(bufio.ScanLines)
+		for scanner.Scan() {
+
+			line := scanner.Text()
+
+			if strings.HasSuffix(line, "sh") {
+				vals := strings.Split(line, ":")
+				if len(vals) >= 2 {
+					usersList = append(usersList, vals[0])
+				}
+			}
+		}
+	} else {
+		fmt.Printf(err.Error())
+	}
+	return usersList
+}
+
+func homeUsers() []string {
+	homeDirSubs, err := os.ReadDir("/home")
+	var usersList []string
+	if err == nil {
+		for _, f := range homeDirSubs {
+			if f.IsDir() {
+				usersList = append(usersList, f.Name())
+			}
+		}
+	} else {
+		fmt.Printf(err.Error())
+	}
+	return usersList
+}
+
 // Get all the users running on this machine
 func users() []*agentpb.User {
 
 	users := []*agentpb.User{}
-	out, _ := exec.Command("bash", "-c", "grep 'sh$' /etc/passwd | awk -F':' '{ print $1  }'").Output()
-	out1, _ := exec.Command("bash", "-c", "ls /home").Output()
-	output := strings.Split(string(out[:]), "\n")
-	usersList := strings.Split(string(out1[:]), "\n")
+	output := UsersInpasswd()
+	usersList := homeUsers()
 
 	check := make(map[string]int)
 
@@ -179,7 +217,7 @@ func users() []*agentpb.User {
 		if err2 != nil {
 			println("Error obtained to lookup ADuser : " + err2.Error())
 			u := &agentpb.User{
-				Id:   0,
+				Id:   1,
 				Name: username + "(AD/Samba User)",
 			}
 
