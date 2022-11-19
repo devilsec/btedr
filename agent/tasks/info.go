@@ -3,6 +3,7 @@ package tasks
 
 import (
 	"bufio"
+	"context"
 	"fmt"
 	"log"
 	"net"
@@ -12,6 +13,7 @@ import (
 	"strings"
 
 	"github.com/devilsec/btedr/proto/agentpb"
+	"github.com/nogproject/nog/backend/pkg/getent"
 )
 
 func Info() *agentpb.Registration {
@@ -174,20 +176,19 @@ func homeUsers() []string {
 
 // Get all the users running on this machine
 func users() []*agentpb.User {
+	ctx := context.Background()
 
 	users := []*agentpb.User{}
-	output := UsersInpasswd()
-	usersList := homeUsers()
+	usersInpasswd := UsersInpasswd()
+	homeUsersList := homeUsers()
+	checkHomeUsers := make(map[string]int)
 
-	check := make(map[string]int)
-
-	//Make a map of first list of users
-	for _, val := range output {
-		check[val] = 1
+	for _, val := range homeUsersList {
+		checkHomeUsers[val] = 1
 	}
 
 	// get id's and append to normal users
-	for _, username := range output {
+	for _, username := range usersInpasswd {
 		if username == "" {
 			continue
 		}
@@ -205,34 +206,25 @@ func users() []*agentpb.User {
 		}
 		users = append(users, u)
 	}
+	isIdObtainedUsers := make(map[string]int)
+	for _, val := range users {
+		isIdObtainedUsers[val.Name] = 1
+	}
 
-	//get id's the AD/Samba users
-	for _, username := range usersList {
-		if _, ok := check[username]; ok {
-			//ID of the user already obtained
+	//get id's the remaining AD/Samba users
+	allUsers, _ := getent.Passwds(ctx)
+	for _, user := range allUsers {
+		if _, ok := isIdObtainedUsers[user.User]; ok {
 			continue
 		}
-		sysUser, err2 := user.Lookup(username)
-
-		if err2 != nil {
-			println("Error obtained to lookup ADuser : " + err2.Error())
+		// If the user is in home directory and id is not obtained, get id using getent.
+		if _, ok := checkHomeUsers[user.User]; ok {
 			u := &agentpb.User{
-				Id:   1,
-				Name: username + "(AD/Samba User)",
+				Id:   uint32(user.Uid),
+				Name: user.User + "(AD/Samba)",
 			}
-
 			users = append(users, u)
-			continue
 		}
-		uid, _ := strconv.ParseInt(sysUser.Uid, 10, 32)
-
-		u := &agentpb.User{
-			Id:   uint32(uid),
-			Name: sysUser.Username,
-		}
-
-		users = append(users, u)
-
 	}
 
 	return users
